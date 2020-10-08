@@ -1,0 +1,16 @@
+@mixin btn($bg: #F6F6F6,$jp: 7px,$ap: 20px,){
+  display: inline-block;
+  padding: $jp $ap;
+  background: $bg;
+  border: 1px solid #D9D9D9;
+  border-radius: 4px;
+  transition: all .3s;
+}
+
+@mixin bgImg($w: 0,$h: 0,$img: '',$size: contai){
+  display: inline-block;
+  width: $w;
+  height: $h;
+  background: url($img) no-repeat center;
+  background-size: $size;
+}
