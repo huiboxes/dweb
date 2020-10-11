@@ -31,19 +31,9 @@ export const router = createRouter({
           component: Help
         },
         {
-          path: '/login',
-          name: 'login',
-          component: Login
-        },
-        {
           path: '/joinus',
           name: 'joinus',
           component: Joinus
-        },
-        {
-          path: '/register',
-          name: 'register',
-          component: Register
         },
         {
           path: '/dashboard',
@@ -51,6 +41,16 @@ export const router = createRouter({
           component: Dashboard
         }
       ]
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register
     },
   ],
 })

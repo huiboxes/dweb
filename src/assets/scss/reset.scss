@@ -15,6 +15,7 @@ time, mark, audio, video {
   padding: 0;
   border: 0;
   box-sizing: border-box;
+  font-weight: normal;
 }
 html,body{
   min-width: 100vw;
@@ -44,6 +45,7 @@ ol, ul {
 }
 input{
   font: normal;
+  padding: 0;
 }
 input:focus,a:focus{
   outline: none;

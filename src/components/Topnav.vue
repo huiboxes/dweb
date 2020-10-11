@@ -5,10 +5,10 @@
 
   </div>
   <ul class="menu">
-    <li v-show="/^(?!\/dashboard).*/.test(url)">
+    <li>
       <router-link class="menuItem" to="/help">产品功能</router-link>
     </li>
-    <li v-if="/^(?!\/dashboard).*/.test(url)">
+    <li>
       <router-link class="menuItem" to="/joinus">加入我们</router-link>
     </li>
     <li>
@@ -21,25 +21,11 @@
 </div>
 </template>
 
-<script lang="ts">
-export default {
-  setup() {
-    const url = window.location.pathname
-    return {
-      url
-    }
-  }
-}
-</script>
-
 <style lang="scss" scoped>
 @import '../assets/scss/mixin.scss';
 
 .topnav {
-  display: flex;
-  padding: 16px;
-  max-width: 1216px;
-  margin: auto;
+  @include bar();
 
   >.logo {
     margin-right: auto;

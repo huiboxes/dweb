@@ -1,15 +1,26 @@
 <template>
-<div>
+<div :style="{'background':/^(\/dashboard).*/.test(url)?'#FAFAFA':'#FFFFFF'}">
   <p class="logo"><img src="../assets/images/logo.png" width="90" height="29" alt=""></p>
-
   <div class="links">
     <router-link to="/help">使用帮助</router-link>
     <router-link to="/help">数据安全</router-link>
     <router-link to="/help">服务协议</router-link>
-    <router-link to="/register">快速注册</router-link>
+    <router-link to="/register" v-if="/^(?!\/dashboard).*/.test(url)">快速注册</router-link>
   </div>
 </div>
 </template>
+
+<script lang="ts">
+export default {
+  setup() {
+    const url = window.location.pathname
+
+    return {
+      url
+    }
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .logo {
@@ -28,7 +39,7 @@
     color: #8c8c8c;
     font-size: 14px;
 
-    &:last-of-type {
+    &:nth-child(4) {
       color: #47C479;
     }
   }

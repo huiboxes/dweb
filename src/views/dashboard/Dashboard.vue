@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="container">
   dashboard
 </div>
 </template>
@@ -12,3 +12,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #FAFAFA;
+}
+</style>

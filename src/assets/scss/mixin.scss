@@ -1,3 +1,10 @@
+@mixin bar($p: 16px,$w: 1216px){
+  display: flex;
+  padding: $p;
+  max-width: $w;
+  margin: auto;
+}
+
 @mixin btn($bg: #F6F6F6,$jp: 7px,$ap: 20px,){
   display: inline-block;
   padding: $jp $ap;
