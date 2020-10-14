@@ -1,8 +1,29 @@
 <template>
 <div class="container">
   <div class="UserTopnav">
+    <!-- PC端的LOGO -->
+    <router-link to="/dashboard"><img src="../assets/images/logo.png" width="90" height="29" class="logo"></router-link>
 
-    <!-- <router-link to="/dashboard"><img src="../assets/images/logo.png" width="90" height="29" class="logo"></router-link> -->
+    <!-- 移动端的下拉菜单 -->
+    <Dropdown>
+      <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+        Hover me, Click menu item
+        <DownOutlined />
+      </a>
+      <template v-slot:overlay>
+        <Menu @click="onClick">
+          <a-menu-item key="1">
+            1st menu item
+          </a-menu-item>
+          <a-menu-item key="2">
+            2nd menu item
+          </a-menu-item>
+          <a-menu-item key="3">
+            3rd menu item
+          </a-menu-item>
+        </Menu>
+      </template>
+    </Dropdown>
 
   </div>
 
@@ -13,25 +34,29 @@
 import {
   ref
 } from 'vue'
-
+import {
+  Dropdown,
+  Menu
+} from 'ant-design-vue'
+import {
+  DownOutlined
+} from '@ant-design/icons-vue'
 export default {
+  components: {
+    Dropdown,
+    DownOutlined,
+    Menu
+  },
   setup() {
-    const fileList = ref([])
-    const headers = ref({
-      authorization: 'authorization-text',
-    })
-
-    const handleChange = (info) => {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        console.log(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        console.log(`${info.file.name} file upload failed.`);
-      }
+    const onClick = ({
+      key
+    }) => {
+      console.log(`Click on item ${key}`)
     }
-  }
+    return {
+      onClick,
+    }
+  },
 }
 </script>
 
@@ -40,7 +65,7 @@ export default {
 
 .container {
   margin-bottom: 2px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .06), 0 1px 2px 0 rgba(0, 0, 0, .06);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   .UserTopnav {
     @include bar();
@@ -67,6 +92,5 @@ export default {
       }
     }
   }
-
 }
 </style>

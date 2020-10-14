@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@vue/compiler-sfc": "^3.0.0-rc.1",
+    "babel-plugin-import": "^1.13.1",
     "sass": "^1.26.12",
     "vite": "^1.0.0-rc.1"
   }
