@@ -1,25 +1,25 @@
 <template>
-<div class="container">
-  <div class="UserTopnav">
-    <!-- PC端的LOGO -->
-    <router-link to="/dashboard"><img src="../../assets/images/logo.png" width="90" height="29" class="logo"></router-link>
+  <div class="container">
+    <div class="UserTopnav">
+      <!-- PC端的LOGO -->
+      <router-link to="/dashboard">
+        <img
+          src="../../assets/images/logo.png"
+          width="90"
+          height="29"
+          class="logo"
+        />
+      </router-link>
 
-    <!-- 移动端的下拉菜单 -->
+      <!-- 移动端的下拉菜单 -->
+    </div>
   </div>
-
-</div>
 </template>
 
 <script lang="ts">
-import {
-  ref
-} from 'vue'
 export default {
-  components: {
-
-  },
+  components: {},
   setup() {
-
     return {}
   },
 }
@@ -42,7 +42,7 @@ export default {
       display: none;
 
       .menuItem {
-        >* {
+        > * {
           padding: 5px;
           border: 1px solid red;
         }
@@ -50,9 +50,9 @@ export default {
     }
 
     @media (max-width: 500px) {
-      .logo {
-        display: none;
-      }
+      // .logo {
+      //   display: none;
+      // }
 
       .dropdownMenu {
         display: inline;

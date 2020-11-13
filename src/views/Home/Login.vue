@@ -1,55 +1,84 @@
 <template>
-<div class="layout-container">
-  <form class="form-main">
-    <div class="logo-wrapper">
-      <router-link to="/index" class="logo"></router-link>
-    </div>
-    <h1>数据尚云</h1>
-    <h2>专业的文件管理系统</h2>
-    <div class="username-wrapper">
-      <span class="username-img"></span>
-      <input type="text" name="username" v-model="username" class="username" placeholder="账号" maxlength="100">
-    </div>
-    <div class="password-wrapper">
-      <span class="passwrod-img"></span>
-      <input type="password" name="password" v-model="password" class="password" placeholder="密码" maxlength="200">
-      <!-- <span class="password-invisible" @click="pwdVisible"></span> -->
-    </div>
-    <input type="button" value="登录" class="submitBtn" @click="submit">
-  </form>
-</div>
+  <div class="layout-container">
+    <form class="form-main">
+      <div class="logo-wrapper">
+        <router-link to="/index" class="logo"></router-link>
+      </div>
+      <h1>数据尚云</h1>
+      <h2>专业的文件管理系统</h2>
+      <div class="username-wrapper">
+        <span class="username-img"></span>
+        <input
+          type="text"
+          name="username"
+          v-model="username"
+          class="username"
+          placeholder="账号"
+          maxlength="100"
+          @keypress.enter="submit"
+        />
+      </div>
+      <div class="password-wrapper">
+        <span class="passwrod-img"></span>
+        <input
+          type="password"
+          name="password"
+          v-model="password"
+          class="password"
+          placeholder="密码"
+          maxlength="200"
+          @keypress.enter="submit"
+        />
+        <!-- <span class="password-invisible" @click="pwdVisible"></span> -->
+      </div>
+      <input type="button" value="登录" class="submitBtn" @click="submit" />
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
-import {
-  ref
-} from 'vue'
-import {
-  useRouter
-} from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { message } from 'ant-design-vue'
+import Axios from 'axios'
+import { servicePath } from '@/config/apiUrl'
 
 export default {
   setup() {
     const username = ref('')
     const password = ref('')
+    const router = useRouter()
 
-    const rou = useRouter()
-
-    const submit = () => {
+    const submit = async () => {
       const correctUser = /^[a-zA-Z0-9_-]{4,16}$/.test(username.value)
-      const emptyPwd = (password.value.length === 0)
+      const emptyPwd = password.value.length === 0
 
       if (!correctUser || emptyPwd) {
-        alert('账号或者密码格式不正确')
+        message.error('账号或者密码不正确')
         return
       }
-      rou.push('/dashboard')
+
+      const res = await Axios({
+        method: 'GET',
+        url: servicePath.login,
+        params: {
+          username: username.value,
+          password: password.value,
+        },
+      })
+
+      if (res.data.code != 200) {
+        message.error('账号或者密码不正确')
+        return
+      }
+
+      router.push('/dashboard')
     }
 
     return {
       username,
       password,
-      submit
+      submit,
     }
   },
 }
@@ -85,12 +114,12 @@ export default {
       text-align: center;
     }
 
-    >h1 {
+    > h1 {
       font-size: 32px;
       color: #262626;
     }
 
-    >h2 {
+    > h2 {
       font-size: 18px;
       color: #565656;
       padding-bottom: 20px;
@@ -133,17 +162,12 @@ export default {
       // .password-visible {
       //   @include bgImg(30px, 20px, '../../assets/svg/visiable.svg');
       // }
-
     }
 
     .submitBtn {
       width: 320px;
-      height: 40px;
-      margin-top: 0.7em;
-      font-size: 16px;
-      letter-spacing: 0.5em;
       color: #ffffff;
-      cursor: pointer;
+      margin-top: 0.7em;
       @include btn(#25b864, 0, 12px);
 
       &:hover {
@@ -161,7 +185,6 @@ export default {
       .submitBtn {
         width: 295px;
       }
-
     }
   }
 }
