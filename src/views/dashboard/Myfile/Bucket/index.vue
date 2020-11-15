@@ -1,39 +1,42 @@
 <template>
-  <div class="bucket-wrapper">
-    <div
-      class="bucket"
-      v-for="(item, index) in bucketInfo"
-      :key="index"
-      :title="item.detail"
-      :class="{ active: selectedBucket === index }"
-      @click="selectedBucket = index"
-      @dblclick="bucketEmit($event)"
-    >
-      <span class=" logo"></span>
-      <h2 class="title">{{ item.bucketName }}</h2>
-    </div>
+  <nav></nav>
+  <div
+    class="fileBar"
+    v-for="(b, index) in bucketInfo"
+    :key="index"
+    :title="b.detail"
+    :class="{ active: selectedFile === index }"
+    @click="selectedFile = index"
+    @dblclick="bucketEmit(b)"
+  >
+    <span class="icon"></span>
+    <h2 class="title">{{ b.bucketName || b.name }}</h2>
   </div>
 </template>
 
 <script lang="ts">
 import { inject, ref } from 'vue'
 import Store from '@/store'
+import Utils from '@/util'
 
 export default {
   props: {
     bucketInfo: Array,
-    title: Object,
   },
-  setup(props, ctx) {
-    const selectedBucket = ref(false)
-    const bucketEmit = e => {
-      const bucketName = e.srcElement.innerText
-      ctx.emit('bucket-emit', bucketName)
+  emits: ['bucketEmit'],
+  setup(props, { emit }) {
+    const selectedFile = ref(false)
+    const filePath: any = inject(Store.filePath)
+
+    const bucketEmit = b => {
+      console.log(b)
+      const bucketName = b.bucketName || Utils.getBucketName(filePath.value)
+      const fileName = b.key
+      emit('bucket-emit', bucketName,fileName)
     }
-    const filePath: string = inject(Store.filePath)
-    console.log(filePath.value)
+
     return {
-      selectedBucket,
+      selectedFile,
       bucketEmit,
     }
   },
@@ -43,40 +46,23 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/scss/mixin.scss';
 
-.bucket-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-
-  .bucket {
-    margin: 0 1rem;
-    padding: 5px;
-    border: 1px solid transparent;
-    position: relative;
-    overflow: hidden;
-
-    &.active {
-      background-color: lightblue;
-      border: 1px solid #11a6fe;
-      box-sizing: content-box;
-    }
-
-    .logo {
-      @include bgImg(64px, 64px, '../../../../assets/svg/bucket.svg');
-    }
-
-    .title {
-      width: 100%;
-      text-align: center;
-      line-height: 142px;
-      font-size: 15px;
-      font-weight: bold;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+.fileBar {
+  border-top: 1px solid rgba(#888, 0.1);
+  border-bottom: 1px solid rgba(#888, 0.1);
+  margin-top: -1px;
+  &.active {
+    background-color: rgba(#edf8f1, 0.5);
+    border-color: rgba(#9cd6b5, 0.5);
+  }
+  .icon {
+    @include bgImg(32px, 32px, '../../../../assets/svg/bucket.svg');
+  }
+  .title {
+    margin-left: 0.5em;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: normal;
+    vertical-align: bottom;
   }
 }
 </style>
