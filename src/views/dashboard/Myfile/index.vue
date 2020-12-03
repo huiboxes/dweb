@@ -1,28 +1,30 @@
 <template>
   <div class="booth">
+    <Filenav />
     <!-- @contextmenu.prevent="openMenu($event)" -->
-    <FileOperations />
     <Bucket :bucketInfo="bucketInfo" @bucketEmit="getDir" />
     <BucketMenu :style="location" v-if="menuVisible" />
+    <FileOperations class="booth-footer" />
   </div>
 </template>
 
 <script lang="ts">
 import { inject, onMounted, provide, reactive, ref } from 'vue'
-import Axios from 'axios'
 import Store from '@/store'
 
 import Bucket from './Bucket/index.vue'
 import BucketMenu from './Menu/index.vue'
 import FileOperations from './FileOperations/index.vue'
-import { servicePath } from '@/config/apiUrl'
 import Utils from '@/util'
+import service from '@/service'
+import Filenav from './Filenav/index.vue'
 
 export default {
   components: {
     Bucket,
     BucketMenu,
     FileOperations,
+    Filenav,
   },
   setup() {
     const bucketInfo = ref([])
@@ -33,46 +35,26 @@ export default {
       left: '0',
     })
 
-    provide(Store.filePath, ref(''))
+    provide(Store.filePath, ref('/'))
     const filePath: any = inject(Store.filePath)
 
     onMounted(async () => {
-      const res = await Axios({
-        method: 'GET',
-        url: servicePath.getBucketList,
-      })
-      filePath.value = '/'
-      bucketInfo.value = [...res.data]
+      const res = await service.file.init()
+      bucketInfo.value = res.data
     })
 
-    const getDir = async (bucketName,fileName) => {
+    const getDir = async (bucketName, fileName) => {
       const isSubDir =
         Utils.getCharCount(filePath.value, '/') > 1 ? true : false
       if (!isSubDir) {
-        const res = await Axios({
-          method: 'GET',
-          url: servicePath.getFilesList,
-          params: {
-            bucket: bucketName,
-            dir: filePath.value,
-          },
-        })
+        const res = await service.file.changeDir(bucketName, filePath.value)
         bucketInfo.value = res.data.objectList
         filePath.value += bucketName + '/'
-      }else{
-        const res = await Axios({
-          method: 'GET',
-          url: servicePath.getFilesList,
-          params: {
-            bucket: bucketName,
-            dir: fileName,
-          },
-        })
+      } else {
+        const res = await service.file.changeDir(bucketName, fileName)
         bucketInfo.value = res.data.objectList
-        filePath.value += fileName.substr(1)
+        filePath.value += Utils.fixedDir(fileName)
       }
-      
-      console.log(filePath.value)
     }
 
     // 右击菜单相关函数
@@ -101,6 +83,12 @@ export default {
 
 <style lang="scss" scoped>
 .booth {
+  position: relative;
   min-height: 460px;
+  .booth-footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
 }
 </style>

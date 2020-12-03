@@ -2,6 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 import Home from '../views/Home/Home.vue'
 import Index from '../views/Home/Index.vue'
+import Dashboard from '../views/Dashboard/Dashboard.vue';
+import Myfile from '../views/Dashboard/Myfile/index.vue';
 
 const routes: Array<RouteRecordRaw> = [
   /* 前端界面 */
@@ -26,17 +28,16 @@ const routes: Array<RouteRecordRaw> = [
         name: 'joinus',
         component: () => import('../views/Home/Joinus.vue'),
       },
-      /* 登陆后界面 */
       {
         path: '/dashboard',
         name: 'dashboard',
-        component: () => import('../views/Dashboard/Dashboard.vue'),
+        component: Dashboard,
         redirect: '/dashboard/myfile',
         children:[
           {
             path: 'myfile',
             name: 'myfile',
-            component: ()=>import('../views/Dashboard/Myfile/index.vue'),
+            component: Myfile,
           },
           {
             path: 'private',
@@ -67,12 +68,30 @@ const routes: Array<RouteRecordRaw> = [
     path: '/register',
     name: 'register',
     component: () => import('../views/Home/Register.vue'),
-  }
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
+
+
+// router.beforeEach((to,from,next)=>{
+//   if (window.isLogin) {
+//     if (to.path === '/login') {
+//       next('/')
+//     }else{
+//       next()
+//     }
+//   }else{
+//     if (to.path === '/login') {
+//       next()
+//     }else{
+//       next('/login?redirect=' + to.fullPath)
+//     }
+    
+//   }
+// })
 
 export default router

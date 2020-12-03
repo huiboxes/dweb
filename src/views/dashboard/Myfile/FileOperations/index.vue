@@ -1,34 +1,39 @@
 <template>
-  <ul class="FileOperations">
-    <li><button>新建文件夹</button></li>
-    <li><button>上传文件</button></li>
-  </ul>
+  <div class="FileOperations">
+    <ul class="FileOperations">
+      <li><NewFolder /></li>
+      <li><Upload v-if="filePath !== '/'" /></li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
+import { inject } from 'vue'
+import Store from '@/store'
+
+import Upload from './Upload/index.vue'
+import NewFolder from './NewFolder/index.vue'
+
 export default {
+  components: {
+    Upload,
+    NewFolder,
+  },
   setup() {
-    return {}
+    const filePath = inject(Store.filePath)
+
+    return {
+      filePath,
+    }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../assets/scss/mixin.scss';
-
 .FileOperations {
   display: flex;
-  flex-direction: row-reverse;
-
-  li > button {
-    @include btn(#fff, 0, 8px);
+  >li{
     margin: 0 5px;
-    background: #fafafa;
-
-    &:hover {
-      color: #47c479;
-      border: 1px solid#47c479;
-    }
   }
 }
 </style>

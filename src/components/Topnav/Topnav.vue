@@ -48,6 +48,7 @@
       .dmenuItem {
         display: inline-block;
         padding: 8px 24px;
+        color: #292929;
       }
 
       .login {

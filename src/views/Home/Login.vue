@@ -39,9 +39,7 @@
 <script lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { message } from 'ant-design-vue'
-import Axios from 'axios'
-import { servicePath } from '@/config/apiUrl'
+import service from '@/service'
 
 export default {
   setup() {
@@ -50,29 +48,8 @@ export default {
     const router = useRouter()
 
     const submit = async () => {
-      const correctUser = /^[a-zA-Z0-9_-]{4,16}$/.test(username.value)
-      const emptyPwd = password.value.length === 0
-
-      if (!correctUser || emptyPwd) {
-        message.error('账号或者密码不正确')
-        return
-      }
-
-      const res = await Axios({
-        method: 'GET',
-        url: servicePath.login,
-        params: {
-          username: username.value,
-          password: password.value,
-        },
-      })
-
-      if (res.data.code != 200) {
-        message.error('账号或者密码不正确')
-        return
-      }
-
-      router.push('/dashboard')
+      const logined = await service.login(username.value, password.value)
+      if (logined) router.push('/dashboard')
     }
 
     return {
@@ -183,7 +160,7 @@ export default {
       }
 
       .submitBtn {
-        width: 295px;
+        width: 315px;
       }
     }
   }
