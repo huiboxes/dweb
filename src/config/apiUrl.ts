@@ -7,5 +7,8 @@ export const servicePath = {
   newDir: 'dx/object',
 
   newBucket: 'dx/bucket',
-  delteBucket: 'dx/deleteBucket',
+  deleteBucket: 'dx/deleteBucket',
+  deleteDir: 'dx/deleteDir',
+  deleteFile: 'dx/deleteFile',
+  upload: 'dx/object',
 }

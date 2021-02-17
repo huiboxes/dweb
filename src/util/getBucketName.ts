@@ -1,3 +1,5 @@
-export default function getBucketName(str: string): string {
-  return str.match(/\/(\S*)\//)[1].split('/')[0]
+export default function getBucketName(path: string): string {
+  return path.lastIndexOf('/')
+    ? path.match(/\/(\S*)\//)[1].split('/')[0]
+    : path.substr(1)
 }

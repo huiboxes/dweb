@@ -1,46 +1,95 @@
 <template>
-  <ul class="asideMenu">
-    <li v-for="(value, key, index) in todoItem" :key="index">
-      <router-link :to="'/dashboard/' + value">{{ key }}</router-link>
-    </li>
-  </ul>
+  <a-tree
+    :load-data="onLoadData"
+    :tree-data="treeData"
+    v-model:expandedKeys="expandedKeys"
+    v-model:selectedKeys="selectedKeys"
+  />
 </template>
+<script>
+import { inject, defineComponent, ref, onMounted } from 'vue'
+import { Tree } from 'ant-design-vue'
+import axios from 'axios'
+import Store from '@/store'
+import Utils from '@/util'
+import service from '@/service'
 
-<script lang="ts">
-export default {
-  props: {
-    todoItem: Object,
+export default defineComponent({
+  components: {
+    'a-tree': Tree,
   },
   setup() {
-    return {}
-  },
-}
-</script>
+    const expandedKeys = ref([])
+    const selectedKeys = ref([])
 
-<style lang="scss" scoped>
-.current {
-  color: #25b864;
-}
+    const filePath = inject(Store.filePath)
+    const bucketInfo = inject(Store.bucketInfo)
+    const bucketName = Utils.getBucketName(filePath.value)
+    const buckets = []
 
-.asideMenu {
-  padding: 0 20px;
+    console.log(bucketInfo.value);
 
-  /* vue自带的类名 */
-  .router-link-active {
-    color: #25b864;
-  }
+    // for (const bucket of bucketInfo.value) {
+    //   console.log(bucket)
+    // }
 
-  a {
-    width: 100%;
-    padding: 0 10px;
-    display: inline-block;
-    line-height: 40px;
-    color: #8c8c8c;
-    font-size: 15px;
+    const treeData = ref([
+      {
+        title: 'Expand to load',
+        key: '0',
+      },
+      {
+        title: 'Expand to load',
+        key: '1',
+      },
+      {
+        title: 'Tree Node',
+        key: '2',
+        isLeaf: true,
+      },
+    ])
 
-    &:hover {
-      background-color: #f5f5f5;
+    const onLoadData = treeNode => {
+      return new Promise(resolve => {
+        if (treeNode.dataRef.children) {
+          resolve()
+          return
+        }
+
+        axios({
+          method: 'GET',
+          url: 'dx/bucket/list',
+          // params: {
+          //   bucket: bucketName,
+          //   dir: filePath.value,
+          // },
+        }).then(result => {
+          console.log(result)
+        })
+
+        setTimeout(() => {
+          treeNode.dataRef.children = [
+            {
+              title: 'Child Node',
+              key: `${treeNode.eventKey}-0`,
+            },
+            {
+              title: 'Child Node',
+              key: `${treeNode.eventKey}-1`,
+            },
+          ]
+          treeData.value = [...treeData.value]
+          resolve()
+        }, 1000)
+      })
     }
-  }
-}
-</style>
+
+    return {
+      expandedKeys,
+      selectedKeys,
+      treeData,
+      onLoadData,
+    }
+  },
+})
+</script>

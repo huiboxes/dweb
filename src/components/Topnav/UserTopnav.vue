@@ -11,16 +11,26 @@
         />
       </router-link>
 
-      <!-- 移动端的下拉菜单 -->
+      <Button class="logout" @click="logout">退出登录</Button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { useRouter } from 'vue-router'
+import { Button } from 'ant-design-vue'
+
 export default {
-  components: {},
+  components: {
+    Button,
+  },
   setup() {
-    return {}
+    const router = useRouter()
+    const logout = () => {
+      window.localStorage.removeItem('isLogin')
+      router.push('/login')
+    }
+    return { logout }
   },
 }
 </script>
@@ -36,27 +46,18 @@ export default {
 
   .UserTopnav {
     @include bar();
+    display: flex;
     background-color: #fff;
+    justify-content: space-between;
 
-    .dropdownMenu {
-      display: none;
-
-      .menuItem {
-        > * {
-          padding: 5px;
-          border: 1px solid red;
-        }
-      }
+    .logout {
+      border-radius: 2px;
     }
 
     @media (max-width: 500px) {
       // .logo {
       //   display: none;
       // }
-
-      .dropdownMenu {
-        display: inline;
-      }
     }
   }
 }

@@ -1,0 +1,17 @@
+@import '@/assets/scss/mixin.scss';
+
+.videoIcon {
+  @include bgImg(32px, 32px, '../svg/files.svg');
+}
+.audioIcon {
+  @include bgImg(32px, 32px, '../svg/files.svg');
+}
+.wordIcon {
+  @include bgImg(32px, 32px, '../svg/files.svg');
+}
+.excelIcon {
+  @include bgImg(32px, 32px, '../svg/files.svg');
+}
+.powerIcon {
+  @include bgImg(32px, 32px, '../svg/files.svg');
+}

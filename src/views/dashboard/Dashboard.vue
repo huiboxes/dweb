@@ -2,7 +2,7 @@
   <div class="body">
     <div class="container">
       <aside class="aside">
-        <Aside :todoItem="todoItem" />
+        <Aside />
       </aside>
       <main class="booth-wrapper">
         <router-view />
@@ -11,25 +11,40 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
+import { provide, inject, ref, onMounted } from 'vue'
 import Aside from '../../components/Aside/index.vue'
+import Store from '@/store'
+import service from '@/service'
 
 export default {
   components: {
     Aside,
   },
   setup() {
-    const todoItem = {
-      最近使用: 'recently',
-      我的文件: 'myfile',
-      隐藏空间: 'private',
-      回收站: 'recycle',
-    }
+    provide(Store.filePath, ref('/'))
+    provide(Store.bucketInfo, ref([]))
 
-    return {
-      todoItem,
-    }
+    const bucketInfo = inject(Store.bucketInfo)
+
+    onMounted(async () => {
+      const res = await service.file.init()
+      bucketInfo.value = res.data
+    })
+    
   },
+  // setup() {
+  //   const todoItem = {
+  //     最近使用: 'recently',
+  //     我的文件: 'myfile',
+  //     隐藏空间: 'private',
+  //     回收站: 'recycle',
+  //   }
+
+  //   return {
+  //     todoItem,
+  //   }
+  // },
 }
 </script>
 

@@ -25,6 +25,8 @@ export default {
     const filePath: any = inject(Store.filePath)
     const path: any = ref([])
 
+    
+
     watch(filePath, () => {
       path.value = Utils.parsePath(filePath.value)
     })

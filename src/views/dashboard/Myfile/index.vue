@@ -3,21 +3,23 @@
     <Filenav />
     <!-- @contextmenu.prevent="openMenu($event)" -->
     <Bucket :bucketInfo="bucketInfo" @bucketEmit="getDir" />
+    <Tip v-if="!bucketInfo" />
     <BucketMenu :style="location" v-if="menuVisible" />
     <FileOperations class="booth-footer" />
   </div>
 </template>
 
-<script lang="ts">
-import { inject, onMounted, provide, reactive, ref } from 'vue'
+<script>
+import { inject, reactive, ref } from 'vue'
 import Store from '@/store'
 
 import Bucket from './Bucket/index.vue'
 import BucketMenu from './Menu/index.vue'
 import FileOperations from './FileOperations/index.vue'
+import Filenav from './Filenav/index.vue'
+import Tip from './Tip/index.vue'
 import Utils from '@/util'
 import service from '@/service'
-import Filenav from './Filenav/index.vue'
 
 export default {
   components: {
@@ -25,9 +27,9 @@ export default {
     BucketMenu,
     FileOperations,
     Filenav,
+    Tip,
   },
   setup() {
-    const bucketInfo = ref([])
     const menuVisible = ref(false)
     const location = reactive({
       position: 'absolute',
@@ -35,13 +37,9 @@ export default {
       left: '0',
     })
 
-    provide(Store.filePath, ref('/'))
-    const filePath: any = inject(Store.filePath)
+    const filePath = inject(Store.filePath)
+    const bucketInfo = inject(Store.bucketInfo)
 
-    onMounted(async () => {
-      const res = await service.file.init()
-      bucketInfo.value = res.data
-    })
 
     const getDir = async (bucketName, fileName) => {
       const isSubDir =

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { servicePath } from '@/config/apiUrl'
-import service from '.'
 
 export const init = () => axios(servicePath.getBucketList)
 
@@ -39,11 +38,52 @@ export const newBucket = (bucket: string) => {
 export const deleteBucket = (bucket: string) => {
   return axios({
     method: 'POST',
-    url: servicePath.delteBucket,
+    url: servicePath.deleteBucket,
     params: {
       bucket,
     },
   })
 }
 
+export const deleteDir = (bucket: string, key: string) => {
+  return axios({
+    method: 'POST',
+    url: servicePath.deleteDir,
+    params: {
+      bucket,
+      key,
+    },
+  })
+}
 
+export const deleteFile = (bucket: string, key: string) => {
+  return axios({
+    method: 'POST',
+    url: servicePath.deleteFile,
+    params: {
+      bucket,
+      key,
+    },
+  })
+}
+
+export const upload = (
+  bucket: string,
+  key: string,
+  mediaType: string,
+  formData
+) => {
+  return axios({
+    method: 'POST',
+    url: servicePath.upload,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    params: {
+      bucket,
+      key,
+      mediaType,
+    },
+    data: formData,
+  })
+}

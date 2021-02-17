@@ -2,22 +2,19 @@
   <a-upload
     name="file"
     :multiple="true"
-    :headers="headers"
-    action="#"
-    @change="handleChange"
+    :showUploadList="false"
+    :customRequest="customRequest"
   >
-    <!-- https://www.mocky.io/v2/5cc8019d300000980a055e76 
-        192.168.220.120:8081/dx/object
-    -->
     <a-button>上传文件</a-button>
   </a-upload>
 </template>
-
 <script>
+import Vue from 'vue'
+import { inject } from 'vue'
 import { Upload, Button, message } from 'ant-design-vue'
-// import { ref } from 'vue'
-// import Store from '@/store'
-// import getUrl from './getUrl'
+import service from '@/service'
+import Store from '@/store'
+import Utils from '@/util'
 
 export default {
   components: {
@@ -25,38 +22,28 @@ export default {
     'a-button': Button,
   },
   setup() {
-    // const URL = ref('')
-    // const filePath = inject(Store.filePath)
-    const headers = {}
+    const filePath = inject(Store.filePath)
+    const bucketName = Utils.getBucketName(filePath.value)
 
-    const handleChange = info => {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList)
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} 上传成功`)
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} 上传失败`)
-      }
+    const bucketInfo = inject(Store.bucketInfo)
+
+    const saveFile = (formData, filename, mediaType) => {
+      service.file
+        .upload(bucketName, filename, mediaType, formData)
+        .then(() => message.success(`文件上传成功`))
+    }
+
+    const customRequest = async data => {
+      const key = filePath.value.split(bucketName)[1] + data.file.name
+      bucketInfo.value = [...bucketInfo.value, { key, name: data.file.name,length: data.file.size }]
+      const formData = new FormData()
+      formData.append('content', data.file)
+      await saveFile(formData, key, data.file.type)
     }
 
     return {
-      handleChange,
-      headers,
+      customRequest,
     }
   },
 }
 </script>
-
-<style lang="scss" scoped>
-// .ant-btn {
-//   height: 40px;
-//   padding: 0 11px;
-//   border-radius: 4px;
-//   background-color: #fafafa;
-//   &:hover {
-//     border: 1px solid #47c479;
-//     color: #47c479;
-//   }
-// }
-</style>

@@ -49,7 +49,10 @@ export default {
 
     const submit = async () => {
       const logined = await service.login(username.value, password.value)
-      if (logined) router.push('/dashboard')
+      if (logined) {
+        router.push('/dashboard')
+        window.localStorage.setItem('isLogin','true')
+      }
     }
 
     return {

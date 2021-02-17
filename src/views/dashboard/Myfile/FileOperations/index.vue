@@ -19,7 +19,7 @@ export default {
     Upload,
     NewFolder,
   },
-  setup() {
+  setup(props) {
     const filePath = inject(Store.filePath)
 
     return {
@@ -32,7 +32,7 @@ export default {
 <style lang="scss" scoped>
 .FileOperations {
   display: flex;
-  >li{
+  > li {
     margin: 0 5px;
   }
 }

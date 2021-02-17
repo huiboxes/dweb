@@ -38,22 +38,7 @@ const routes: Array<RouteRecordRaw> = [
             path: 'myfile',
             name: 'myfile',
             component: Myfile,
-          },
-          {
-            path: 'private',
-            name: 'private',
-            component: ()=>import('../views/Dashboard/Private/index.vue'),
-          },
-          {
-            path: 'recently',
-            name: 'recently',
-            component: ()=>import('../views/Dashboard/Recently/index.vue'),
-          },
-          {
-            path: 'recycle',
-            name: 'recycle',
-            component: ()=>import('../views/Dashboard/Recycle/index.vue'),
-          },
+          }
         ]
       },
     ],
@@ -76,22 +61,17 @@ const router = createRouter({
   routes,
 })
 
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const isLogin = localStorage.getItem('isLogin') ? true : false;
+  if (to.path == '/login') {
+    next();
+  } else {
+    // 是否在登录状态下
+    isLogin ? next() : next('/login');
+  }
+});
 
-// router.beforeEach((to,from,next)=>{
-//   if (window.isLogin) {
-//     if (to.path === '/login') {
-//       next('/')
-//     }else{
-//       next()
-//     }
-//   }else{
-//     if (to.path === '/login') {
-//       next()
-//     }else{
-//       next('/login?redirect=' + to.fullPath)
-//     }
-    
-//   }
-// })
+
 
 export default router

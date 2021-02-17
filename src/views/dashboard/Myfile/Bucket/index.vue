@@ -9,25 +9,32 @@
     @dblclick="bucketEmit(b)"
   >
     <div class="file-left">
-      <span :class="b.length ? 'fileIcon' : 'bucketIcon'"></span>
+      <span :class="b.length ? 'fileIcon' : 'bucketIcon'">
+        <img src="" alt="" v-if="b.length">
+      </span>
       <h2 class="title">{{ b.bucketName || b.name }}</h2>
     </div>
     <ul class="file-right">
-      <li class="fileLength" v-if="b.length > 0">
+      <li class="fileLength" v-if="b.length">
         大小：{{ (b.length / 1000000).toFixed(1) }} MB
       </li>
       <li class="deleteFile" @click="deleteFile">
         删除
       </li>
+      <li class="download" @click="download" v-if="b.length">
+        下载
+      </li>
     </ul>
+    <slot></slot>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { inject, ref } from 'vue'
 import Store from '@/store'
 import service from '@/service'
 import Utils from '@/util'
+import { ipUrl } from '@/config/apiUrl'
 
 export default {
   props: {
@@ -36,7 +43,7 @@ export default {
   emits: ['bucketEmit'],
   setup(props, { emit }) {
     const selectedFile = ref(false)
-    const filePath: any = inject(Store.filePath)
+    const filePath = inject(Store.filePath)
 
     const bucketEmit = b => {
       const bucketName = b.bucketName || Utils.getBucketName(filePath.value)
@@ -48,25 +55,52 @@ export default {
       if (confirm('确定要删除吗？')) {
         const currentItem = e.target.parentElement.parentElement
         const currentName = currentItem.querySelector('h2.title').textContent
-        const isFile = e.currentTarget.parentElement.querySelector('.fileLength')
-        
+        const bucketName = Utils.getBucketName(filePath.value)
+        const isFile = e.currentTarget.parentElement.querySelector(
+          '.fileLength'
+        )
+
         if (filePath.value === '/') {
           currentItem.parentElement.removeChild(currentItem)
           const { status } = await service.file.deleteBucket(currentName)
-          Utils.tips(status,'删除文件夹')
-        }else if(isFile){
-          
-          return
+          Utils.tips(status, '删除文件夹')
+        } else if (isFile) {
+          currentItem.parentElement.removeChild(currentItem)
+          const key = filePath.value.split(bucketName)[1] + currentName
+          const { status } = await service.file.deleteFile(bucketName, key)
+          Utils.tips(status, '删除文件')
+        } else {
+          const key = filePath.value.split(bucketName)[1] + currentName + '/'
+          try {
+            await service.file.deleteDir(bucketName, key)
+            alert('删除文件夹成功')
+            currentItem.parentElement.removeChild(currentItem)
+          } catch (error) {
+            alert('文件夹不为空，不能删除')
+          }
         }
-        
-        console.log(filePath.value);
       }
+    }
+
+    const download = e => {
+      const bucketName = Utils.getBucketName(filePath.value)
+      const currentItem = e.target.parentElement.parentElement
+      const currentName = currentItem.querySelector('h2.title').textContent
+      const key = filePath.value.split(bucketName)[1] + currentName
+
+      const url = `${ipUrl}/dx/object/content?bucket=${bucketName}&key=${key}`
+      const a = document.createElement('a')
+      a.href = url
+      a.crossOrigin = 'Anonymous'
+      a.download = currentName
+      a.click()
     }
 
     return {
       selectedFile,
       bucketEmit,
       deleteFile,
+      download,
     }
   },
 }
@@ -82,8 +116,8 @@ export default {
   border-bottom: 1px solid rgba(#888, 0.1);
   margin-top: -1px;
   &.active {
-    background-color: rgba(#edf8f1, 0.5);
-    border-color: rgba(#9cd6b5, 0.5);
+    background-color: rgba(#cde5f8, 0.5);
+    border-color: rgba(#b1d1f7, 0.5);
   }
 
   .bucketIcon {
@@ -91,8 +125,6 @@ export default {
   }
   .fileIcon {
     @include bgImg(32px, 32px, '../../../../assets/svg/files.svg');
-    // margin-top: 8px;
-    vertical-align: bottom;
   }
   .title {
     margin-left: 0.5em;
@@ -113,7 +145,8 @@ export default {
     > li {
       margin: 0 5px;
     }
-    > .deleteFile {
+    > .deleteFile,
+    .download {
       transform: translateY(35%);
     }
     > .fileLength {
