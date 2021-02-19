@@ -13,7 +13,7 @@
 
 <script>
 import { provide, inject, ref, onMounted } from 'vue'
-import Aside from '../../components/Aside/index.vue'
+import Aside from './Myfile/Aside/index.vue'
 import Store from '@/store'
 import service from '@/service'
 
@@ -31,7 +31,6 @@ export default {
       const res = await service.file.init()
       bucketInfo.value = res.data
     })
-    
   },
   // setup() {
   //   const todoItem = {
@@ -63,6 +62,9 @@ export default {
     .aside {
       flex: 2;
       min-width: 120px;
+      background-color: #F4F4F7;
+      overflow: hidden;
+      border-radius: 8px;
     }
 
     .booth-wrapper {

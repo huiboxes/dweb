@@ -9,7 +9,6 @@
   </a-upload>
 </template>
 <script>
-import Vue from 'vue'
 import { inject } from 'vue'
 import { Upload, Button, message } from 'ant-design-vue'
 import service from '@/service'

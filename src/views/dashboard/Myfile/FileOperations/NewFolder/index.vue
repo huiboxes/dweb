@@ -19,7 +19,7 @@
 <script>
 import Store from '@/store'
 import { Modal, Button, Input, message } from 'ant-design-vue'
-import { inject, onUpdated, ref } from 'vue'
+import { inject, ref } from 'vue'
 import service from '@/service'
 import Utils from '@/util'
 
@@ -34,8 +34,6 @@ export default {
     const confirmLoading = ref(false)
     const dirName = ref('')
     const filePath = inject(Store.filePath)
-
-    const bucketName = Utils.getBucketName(filePath.value)
     const bucketInfo = inject(Store.bucketInfo)
 
     const showModal = () => {

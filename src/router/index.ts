@@ -61,6 +61,7 @@ const router = createRouter({
   routes,
 })
 
+
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const isLogin = localStorage.getItem('isLogin') ? true : false;
@@ -71,7 +72,6 @@ router.beforeEach((to, from, next) => {
     isLogin ? next() : next('/login');
   }
 });
-
 
 
 export default router

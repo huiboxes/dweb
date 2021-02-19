@@ -19,7 +19,7 @@ export default {
     Upload,
     NewFolder,
   },
-  setup(props) {
+  setup() {
     const filePath = inject(Store.filePath)
 
     return {

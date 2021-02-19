@@ -40,7 +40,6 @@ export default {
     const filePath = inject(Store.filePath)
     const bucketInfo = inject(Store.bucketInfo)
 
-
     const getDir = async (bucketName, fileName) => {
       const isSubDir =
         Utils.getCharCount(filePath.value, '/') > 1 ? true : false
@@ -86,7 +85,7 @@ export default {
   .booth-footer {
     width: 100%;
     position: absolute;
-    bottom: 0;
+    bottom: -23px;
   }
 }
 </style>

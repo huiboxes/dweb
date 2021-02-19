@@ -46,7 +46,7 @@ export default {
 
 <style lang="scss" scoped>
 .filenav-wrapper {
-  height: 30px;
+  height: 35px;
   line-height: 30px;
   font-size: 15px;
   &::v-deep span {
