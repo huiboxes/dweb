@@ -3,18 +3,19 @@
     <a-breadcrumb-item
       v-for="(f, index) in path"
       :key="'f' + index"
-      @click="switchPath(f)"
+      @click="switchPath(f, index)"
     >
       {{ f }}
     </a-breadcrumb-item>
   </a-breadcrumb>
 </template>
 
-<script lang="ts">
+<script>
 import { Breadcrumb } from 'ant-design-vue'
 import { inject, ref, watch } from 'vue'
 import Store from '@/store'
 import Utils from '@/util'
+import service from '@/service'
 
 export default {
   components: {
@@ -22,18 +23,29 @@ export default {
     'a-breadcrumb-item': Breadcrumb.Item,
   },
   setup() {
-    const filePath: any = inject(Store.filePath)
-    const path: any = ref([])
-
-    
+    const filePath = inject(Store.filePath)
+    const path = ref([])
+    const bucketInfo = inject(Store.bucketInfo)
 
     watch(filePath, () => {
       path.value = Utils.parsePath(filePath.value)
     })
 
-    const switchPath = f => {
-      console.log(f)
-      // console.log(filePath.value)
+    const switchPath = async (f, key) => {
+      if (key === 0) {
+        // 是否是bucket
+        const res = await service.file.changeDir(f, '/')
+        bucketInfo.value = res.data.objectList
+        filePath.value = `/${f}/`
+      } else {
+        const pathArr = filePath.value.split('/')
+        const bucketName = pathArr[1]
+        pathArr.splice(key + 2)
+        const finalPath = pathArr.join('/') + '/'
+        const res = await service.file.changeDir(bucketName, finalPath)
+        bucketInfo.value = res.data.objectList
+        filePath.value = finalPath
+      }
     }
 
     return {
@@ -52,7 +64,7 @@ export default {
   &::v-deep span {
     margin: 2px;
   }
-  &::v-deep span.ant-breadcrumb-link{
+  &::v-deep span.ant-breadcrumb-link {
     margin-left: -4px;
   }
 }

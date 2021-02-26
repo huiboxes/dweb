@@ -1,6 +1,5 @@
 <template>
   <a-tree
-  
     :load-data="onLoadData"
     :tree-data="treeData"
     v-model:expandedKeys="expandedKeys"
@@ -17,7 +16,6 @@ import service from '@/service'
 export default defineComponent({
   components: {
     'a-tree': Tree.DirectoryTree,
-    
   },
   setup() {
     const expandedKeys = ref([])
@@ -29,25 +27,13 @@ export default defineComponent({
 
     let clickCount = 0
 
-    // const listFile = fileList => {
-    //   const tempBuckets = []
-    //   for (const bucket of fileList.value) {
-    //     tempBuckets.push({
-    //       title: bucket.bucketName,
-    //       key: bucket.bucketId,
-    //     })
-    //   }
-
-    //   return tempBuckets
-    // }
-
     onMounted(async () => {
       const res = await service.file.init()
 
       for (const bucket of res.data) {
         buckets.push({
           title: bucket.bucketName,
-          key: bucket.bucketId,
+          key: `${bucket.bucketId}`,
         })
       }
     })
@@ -58,6 +44,20 @@ export default defineComponent({
         key: '0',
       },
     ])
+
+    const unfoldDir = (bucketInfo,treeNode,treeData) => {
+      const buckets = []
+      for (const bucket of bucketInfo) {
+        if (bucket.length === 0) {
+          buckets.push({
+            title: bucket.name,
+            key: bucket.key,
+          })
+        }
+      }
+      treeNode.dataRef.children = buckets
+      treeData.value = [...treeData.value]
+    }
 
     const onLoadData = treeNode => {
       return new Promise(resolve => {
@@ -72,7 +72,6 @@ export default defineComponent({
           treeNode.dataRef.children = buckets
           treeData.value = [...treeData.value]
         } else {
-          const buckets = []
           const isSubDir =
             Utils.getCharCount(filePath.value, '/') > 1 ? true : false
           if (!isSubDir) {
@@ -80,52 +79,38 @@ export default defineComponent({
               filePath.value += treeNode.title + '/'
               bucketInfo.value = res.data.objectList
 
-              for (const bucket of bucketInfo.value) {
-                if (bucket.length === 0) {
-                  buckets.push({
-                    title: bucket.name,
-                    key: bucket.key,
-                  })
-                }
-                // 是否显示文件
-                //  else {
-                //   buckets.push({
-                //     title: bucket.name,
-                //     key: bucket.id,
-                //     isLeaf: true,
-                //   })
-                // }
-              }
-              treeNode.dataRef.children = buckets
-              treeData.value = [...treeData.value]
+              unfoldDir(bucketInfo.value,treeNode,treeData)
             })
           } else {
-            const bucketName = Utils.getBucketName(filePath.value)
-            const dir =
-              filePath.value.slice(bucketName.length + 1) + treeNode.title + '/'
-            service.file.changeDir(bucketName, dir).then(res => {
-              filePath.value += Utils.fixedDir(`/${treeNode.title}/`)
-              bucketInfo.value = res.data.objectList
+            if (clickCount >= 3) {
+              // 是否点击了bucket
+              const expanded = expandedKeys.value
+              if (!expanded.toString().includes('/')) {
+                const currentBucket = treeData.value[0].children.filter(
+                  item => item.key === expanded[expanded.length - 1]
+                )
 
-              for (const bucket of bucketInfo.value) {
-                if (bucket.length === 0) {
-                  buckets.push({
-                    title: bucket.name,
-                    key: bucket.key,
+                service.file
+                  .changeDir(currentBucket[0].title, '/')
+                  .then(res => {
+                    filePath.value = `/${treeNode.title}/`
+                    bucketInfo.value = res.data.objectList
+
+                    unfoldDir(bucketInfo.value,treeNode,treeData)
                   })
-                }
-                //  else {
-                //   buckets.push({
-                //     title: bucket.name,
-                //     key: bucket.id,
-                //     isLeaf: true,
-                //   })
-                // }
+              } else {
+                const bucketName = Utils.getBucketName(filePath.value)
+                const dir =
+                  filePath.value.slice(bucketName.length + 1) + treeNode.title + '/'
+                service.file.changeDir(bucketName, dir).then(res => {
+                  filePath.value += Utils.fixedDir(`/${treeNode.title}/`)
+                  bucketInfo.value = res.data.objectList
+                  unfoldDir(bucketInfo.value,treeNode,treeData)
+                })
               }
+            }
 
-              treeNode.dataRef.children = buckets
-              treeData.value = [...treeData.value]
-            })
+            
           }
         }
         resolve()
