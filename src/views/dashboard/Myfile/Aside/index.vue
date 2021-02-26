@@ -2,10 +2,13 @@
   <a-tree
     :load-data="onLoadData"
     :tree-data="treeData"
+    @expand="onExpand"
     v-model:expandedKeys="expandedKeys"
     v-model:selectedKeys="selectedKeys"
   />
 </template>
+
+
 <script>
 import { inject, defineComponent, ref, onMounted } from 'vue'
 import { Tree } from 'ant-design-vue'
@@ -45,7 +48,7 @@ export default defineComponent({
       },
     ])
 
-    const unfoldDir = (bucketInfo,treeNode,treeData) => {
+    const unfoldDir = (bucketInfo, treeNode, treeData) => {
       const buckets = []
       for (const bucket of bucketInfo) {
         if (bucket.length === 0) {
@@ -57,6 +60,38 @@ export default defineComponent({
       }
       treeNode.dataRef.children = buckets
       treeData.value = [...treeData.value]
+    }
+
+    const onExpand = (expandedKeys) => {
+      if (clickCount > 2) {
+        // console.log(expandedKeys)
+        // console.log(filePath.value)
+
+        // const current = expandedKeys[expandedKeys.length - 1]
+        // const prev = expandedKeys[expandedKeys.length - 2]
+
+        console.log(expandedKeys)
+
+        // console.log(current,prev)
+        // console.log(current);
+        
+        // 点的是bucket
+        // if (current.indexOf('/')) {
+
+        //   console.log(current);
+        //   // service.file.changeDir(current, '/').then(res => {
+        //   //   filePath.value = `/${treeNode.title}/`
+        //   //   bucketInfo.value = res.data.objectList
+
+        //   //   unfoldDir(bucketInfo.value, treeNode, treeData)
+        //   // })
+        // }
+
+        // if (Utils.getCharCount(current, '/') <= Utils.getCharCount(prev, '/')) {
+        //   // 当前点的是同级或者上级目录
+        //   console.log(66666);
+        // }
+      }
     }
 
     const onLoadData = treeNode => {
@@ -79,15 +114,16 @@ export default defineComponent({
               filePath.value += treeNode.title + '/'
               bucketInfo.value = res.data.objectList
 
-              unfoldDir(bucketInfo.value,treeNode,treeData)
+              unfoldDir(bucketInfo.value, treeNode, treeData)
             })
           } else {
             if (clickCount >= 3) {
-              // 是否点击了bucket
               const expanded = expandedKeys.value
-              if (!expanded.toString().includes('/')) {
+              const next = expanded[expanded.length - 1]
+              if (!next.toString().includes('/')) {
+                // 是否点击了bucket
                 const currentBucket = treeData.value[0].children.filter(
-                  item => item.key === expanded[expanded.length - 1]
+                  item => item.key === next
                 )
 
                 service.file
@@ -96,21 +132,21 @@ export default defineComponent({
                     filePath.value = `/${treeNode.title}/`
                     bucketInfo.value = res.data.objectList
 
-                    unfoldDir(bucketInfo.value,treeNode,treeData)
+                    unfoldDir(bucketInfo.value, treeNode, treeData)
                   })
               } else {
                 const bucketName = Utils.getBucketName(filePath.value)
                 const dir =
-                  filePath.value.slice(bucketName.length + 1) + treeNode.title + '/'
+                  filePath.value.slice(bucketName.length + 1) +
+                  treeNode.title +
+                  '/'
                 service.file.changeDir(bucketName, dir).then(res => {
                   filePath.value += Utils.fixedDir(`/${treeNode.title}/`)
                   bucketInfo.value = res.data.objectList
-                  unfoldDir(bucketInfo.value,treeNode,treeData)
+                  unfoldDir(bucketInfo.value, treeNode, treeData)
                 })
               }
             }
-
-            
           }
         }
         resolve()
@@ -122,6 +158,7 @@ export default defineComponent({
       selectedKeys,
       treeData,
       onLoadData,
+      onExpand,
     }
   },
 })
