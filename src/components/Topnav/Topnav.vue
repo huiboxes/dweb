@@ -20,9 +20,9 @@
       <li>
         <router-link class="login" to="/login">登录</router-link>
       </li>
-      <li>
-        <router-link class="register" to="/register">快速注册</router-link>
-      </li>
+      <!-- <li>
+        <router-link class="manage" to="/manage">管理入口</router-link>
+      </li> -->
     </ul>
   </div>
 </template>
@@ -61,13 +61,13 @@
         color: #47c479;
       }
 
-      .register {
+      .manage {
         @include btn(#25b864, 8px);
         color: #fff;
         border: none;
       }
 
-      .register:hover {
+      .manage:hover {
         background-color: #47c479;
       }
 

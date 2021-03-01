@@ -50,9 +50,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Home/Login.vue'),
   },
   {
-    path: '/register',
-    name: 'register',
-    component: () => import('../views/Home/Register.vue'),
+    path: '/manage',
+    name: 'manage',
+    component: () => import('../views/Manage/Manage.vue'),
   },
 ]
 
@@ -64,7 +64,7 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  const isLogin = localStorage.getItem('isLogin') ? true : false;
+  const isLogin = localStorage.getItem('isLogin') && localStorage.getItem('isLogin') != 'false' ? true : false;
   if (to.path == '/login') {
     next();
   } else {

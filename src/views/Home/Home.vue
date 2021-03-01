@@ -1,7 +1,7 @@
 <template>
   <div>
     <Topnav v-if="/^(?!\/dashboard).*/.test(url)" />
-    <UserTopnav v-else class="UserTopnav" />
+    <UserTopnav v-else/>
     <router-view />
     <Footernav />
   </div>

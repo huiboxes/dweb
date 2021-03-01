@@ -50,8 +50,12 @@ export default {
     const submit = async () => {
       const logined = await service.login(username.value, password.value)
       if (logined) {
-        router.push('/dashboard')
-        window.localStorage.setItem('isLogin','true')
+        if (username.value == 'SuperAdmin'){
+          router.push('/manage')
+        }else{
+          router.push('/dashboard')
+        }
+        window.localStorage.setItem('isLogin', 'true')
       }
     }
 

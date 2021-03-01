@@ -12,9 +12,9 @@
       <router-link to="/help">使用帮助</router-link>
       <router-link to="/help">数据安全</router-link>
       <router-link to="/help">服务协议</router-link>
-      <router-link to="/register" v-if="/^(?!\/dashboard).*/.test(url)"
-        >快速注册</router-link
-      >
+      <!-- <router-link to="/register" v-if="/^(?!\/dashboard).*/.test(url)"
+        >管理员登录</router-link
+      > -->
     </div>
   </div>
 </template>
