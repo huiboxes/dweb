@@ -2,8 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 import Home from '../views/Home/Home.vue'
 import Index from '../views/Home/Index.vue'
-import Dashboard from '../views/Dashboard/Dashboard.vue';
-import Myfile from '../views/Dashboard/Myfile/index.vue';
+import Dashboard from '../views/Dashboard/Dashboard.vue'
+import Myfile from '../views/Dashboard/Myfile/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
   /* 前端界面 */
@@ -33,17 +33,16 @@ const routes: Array<RouteRecordRaw> = [
         name: 'dashboard',
         component: Dashboard,
         redirect: '/dashboard/myfile',
-        children:[
+        children: [
           {
             path: 'myfile',
             name: 'myfile',
             component: Myfile,
-          }
-        ]
+          },
+        ],
       },
     ],
   },
-  /* 注册登录界面 */
   {
     path: '/login',
     name: 'login',
@@ -52,7 +51,20 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/manage',
     name: 'manage',
+    redirect: '/manage/userlist',
     component: () => import('../views/Manage/Manage.vue'),
+    children: [
+      {
+        path: 'userlist',
+        name: 'userlist',
+        component: ()=> import('../views/Manage/Userlist.vue')
+      },
+      {
+        path: 'useradd',
+        name: 'useradd',
+        component: ()=>import('../views/Manage/Useradd.vue')
+      }
+    ]
   },
 ]
 
@@ -61,17 +73,19 @@ const router = createRouter({
   routes,
 })
 
-
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  const isLogin = localStorage.getItem('isLogin') && localStorage.getItem('isLogin') != 'false' ? true : false;
+  const isLogin =
+    localStorage.getItem('isLogin') &&
+    localStorage.getItem('isLogin') != 'false'
+      ? true
+      : false
   if (to.path == '/login') {
-    next();
+    next()
   } else {
     // 是否在登录状态下
-    isLogin ? next() : next('/login');
+    isLogin ? next() : next('/login')
   }
-});
-
+})
 
 export default router

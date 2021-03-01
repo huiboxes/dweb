@@ -45,12 +45,12 @@ export default {
       confirmLoading.value = false
     }
 
-    const newfileBar = barName => {
-      const fileBar = document.querySelector('div.fileBar')
-      const newfileBar = fileBar.cloneNode(true)
-      newfileBar.querySelector('h2.title').innerText = barName
-      document.querySelector('div.booth').appendChild(newfileBar)
-    }
+    // const newfileBar = barName => {
+    //   const fileBar = document.querySelector('div.fileBar')
+    //   const newfileBar = fileBar.cloneNode(true)
+    //   newfileBar.querySelector('h2.title').innerText = barName
+    //   document.querySelector('div.booth').appendChild(newfileBar)
+    // }
 
     const handleOk = async () => {
       confirmLoading.value = true
