@@ -27,14 +27,18 @@
     <a-form-item label="用户备注" name="desc">
       <a-textarea v-model:value="formState.desc" placeholder="选填" />
     </a-form-item>
-    <a-form-item :wrapper-col="{ span: 14, offset: 4 }" style="text-align: center;">
+    <a-form-item
+      :wrapper-col="{ span: 14, offset: 4 }"
+      style="text-align: center;"
+    >
       <a-button type="primary" @click="onSubmit" block>创建</a-button>
       <!-- <a-button style="margin-left: 10px" @click="resetForm">重置</a-button> -->
     </a-form-item>
   </a-form>
 </template>
 <script>
-import { Button, Form, Input, Radio } from 'ant-design-vue'
+import service from '@/service'
+import { Button, Form, Input, message, Radio } from 'ant-design-vue'
 import { defineComponent, reactive, ref, toRaw } from 'vue'
 export default defineComponent({
   components: {
@@ -85,15 +89,16 @@ export default defineComponent({
     }
 
     const onSubmit = () => {
-      formRef.value
-        .validate()
-        .then(() => {
-          const {username,password,role,desc} = toRaw(formState)
-          console.log(username,password,role,desc,toRaw(formState))
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      formRef.value.validate().then(() => {
+        const { username, password, role, desc } = toRaw(formState)
+        service.user
+          .useradd(username, password, role, desc)
+          .then(({ data }) => {
+            if (data.code === 200) {
+              message.success(`成功添加用户${username}`)
+            }
+          })
+      })
     }
 
     const resetForm = () => {

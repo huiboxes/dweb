@@ -22,7 +22,9 @@
     <template #renderItem="{ item }">
       <a-list-item>
         <template #actions>
-          <a style="color: #f41" @click="deleteUser(item.userId)">删除</a>
+          <a style="color: #f41" @click="deleteUser(item.userId, item.userName)"
+            >删除</a
+          >
           <!-- <a>more</a> -->
         </template>
         <a-list-item-meta :description="item.detail || '该用户没有备注'">
@@ -49,7 +51,7 @@
 
 <script>
 import { ref, onMounted, nextTick } from 'vue'
-import { List, Spin, Avatar } from 'ant-design-vue'
+import { List, Spin, Avatar, message } from 'ant-design-vue'
 import service from '@/service'
 import axios from 'axios'
 
@@ -90,7 +92,7 @@ export default {
       })
     }
 
-    const deleteUser = async uid => {
+    const deleteUser = async (uid, username) => {
       const res = await axios({
         method: 'POST',
         url: '/dx/sys/userdelete',
@@ -98,8 +100,14 @@ export default {
           userId: uid,
         },
       })
+      if (res.data.code === 200) {
+        message.success(`已删除${username}用户`)
 
-      console.log(res);
+        getData(res => {
+          loading.value = false
+          data.value = res.data
+        })
+      }
     }
 
     return {
